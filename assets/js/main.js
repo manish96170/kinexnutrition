@@ -31,8 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (thumbBtns.length > 0 && mainImage) {
     thumbBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const newSrc = btn.getAttribute('data-image');
+        let newSrc = btn.getAttribute('data-image');
         if (newSrc) {
+          if (newSrc.startsWith('../assets/')) {
+            newSrc = '/' + newSrc.substring(3);
+          }
           mainImage.src = newSrc;
           thumbBtns.forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
