@@ -315,6 +315,12 @@
     grid-template-columns: 1fr;
     gap: 40px;
   }
+
+  /* Disable sticky gallery on mobile — content stacks below images,
+     sticky causes the gallery to scroll behind the product info */
+  .product-gallery {
+    position: static;
+  }
 }
 
 /* Product Gallery */
