@@ -310,23 +310,25 @@
   align-items: start;
 }
 
+/* Product Gallery — sticky on desktop so it stays visible while right content scrolls */
+.product-gallery {
+  position: sticky;
+  top: 100px;
+}
+
+/* On mobile the layout is single-column (gallery on top, info below).
+   Sticky here causes the gallery to remain fixed while the product info
+   scrolls behind/underneath it — disable it so both sections flow normally. */
 @media (max-width: 992px) {
   .product-detail-grid {
     grid-template-columns: 1fr;
     gap: 40px;
   }
 
-  /* Disable sticky gallery on mobile — content stacks below images,
-     sticky causes the gallery to scroll behind the product info */
   .product-gallery {
     position: static;
+    top: auto;
   }
-}
-
-/* Product Gallery */
-.product-gallery {
-  position: sticky;
-  top: 100px;
 }
 
 .gallery-main-view {
