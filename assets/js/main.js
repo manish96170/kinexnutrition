@@ -88,4 +88,148 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // 5. Interactive Flagship Hero Product Slider
+  const heroSlider = document.getElementById('heroSlider');
+  if (heroSlider) {
+    const slides = heroSlider.querySelectorAll('.hero-slide');
+    const navItems = heroSlider.querySelectorAll('.slider-nav-item');
+    const prevBtn = document.getElementById('sliderPrevBtn');
+    const nextBtn = document.getElementById('sliderNextBtn');
+
+    let currentIndex = 0;
+    let autoPlayTimer = null;
+    let progressTimer = null;
+    let progressValue = 0;
+    const SLIDE_DURATION = 5500;
+    const PROGRESS_INTERVAL = 50;
+
+    function resetProgress() {
+      if (progressTimer) clearInterval(progressTimer);
+      progressValue = 0;
+      navItems.forEach((item) => {
+        const fill = item.querySelector('.progress-fill');
+        if (fill) fill.style.width = '0%';
+      });
+    }
+
+    function startProgress() {
+      resetProgress();
+      const currentFill = navItems[currentIndex]?.querySelector('.progress-fill');
+      if (!currentFill) return;
+
+      const increment = (PROGRESS_INTERVAL / SLIDE_DURATION) * 100;
+      progressTimer = setInterval(() => {
+        progressValue += increment;
+        if (progressValue >= 100) {
+          progressValue = 100;
+          currentFill.style.width = '100%';
+          clearInterval(progressTimer);
+        } else {
+          currentFill.style.width = `${progressValue}%`;
+        }
+      }, PROGRESS_INTERVAL);
+    }
+
+    function goToSlide(index) {
+      if (index === currentIndex) return;
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+
+      slides[currentIndex].classList.remove('active');
+      slides[currentIndex].setAttribute('aria-hidden', 'true');
+      navItems[currentIndex].classList.remove('active');
+      navItems[currentIndex].setAttribute('aria-selected', 'false');
+
+      currentIndex = index;
+
+      slides[currentIndex].classList.add('active');
+      slides[currentIndex].setAttribute('aria-hidden', 'false');
+      navItems[currentIndex].classList.add('active');
+      navItems[currentIndex].setAttribute('aria-selected', 'true');
+
+      startProgress();
+    }
+
+    function nextSlide() {
+      goToSlide((currentIndex + 1) % slides.length);
+    }
+
+    function prevSlide() {
+      goToSlide((currentIndex - 1 + slides.length) % slides.length);
+    }
+
+    function startAutoPlay() {
+      stopAutoPlay();
+      startProgress();
+      autoPlayTimer = setInterval(nextSlide, SLIDE_DURATION);
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) clearInterval(autoPlayTimer);
+      if (progressTimer) clearInterval(progressTimer);
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        startAutoPlay();
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        startAutoPlay();
+      });
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const targetIndex = parseInt(item.getAttribute('data-nav-index'), 10);
+        if (!isNaN(targetIndex)) {
+          goToSlide(targetIndex);
+          startAutoPlay();
+        }
+      });
+    });
+
+    heroSlider.addEventListener('mouseenter', stopAutoPlay);
+    heroSlider.addEventListener('mouseleave', startAutoPlay);
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    heroSlider.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    heroSlider.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const threshold = 40;
+      if (touchEndX < touchStartX - threshold) {
+        nextSlide();
+        startAutoPlay();
+      } else if (touchEndX > touchStartX + threshold) {
+        prevSlide();
+        startAutoPlay();
+      }
+    }, { passive: true });
+
+    document.addEventListener('keydown', (e) => {
+      const rect = heroSlider.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inView) {
+        if (e.key === 'ArrowRight') {
+          nextSlide();
+          startAutoPlay();
+        } else if (e.key === 'ArrowLeft') {
+          prevSlide();
+          startAutoPlay();
+        }
+      }
+    });
+
+    startAutoPlay();
+  }
 });
