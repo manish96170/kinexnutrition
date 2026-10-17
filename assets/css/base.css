@@ -126,7 +126,7 @@ button {
 
 /* Brand Logo */
 .brand-logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   font-family: var(--font-family-display);
@@ -134,8 +134,34 @@ button {
   font-size: 1.5rem;
   letter-spacing: 0.04em;
   color: var(--text-primary);
+  text-decoration: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
+.brand-logo:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.brand-logo-img {
+  height: 46px;
+  width: auto;
+  max-width: 175px;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.brand-logo:hover .brand-logo-img {
+  transform: scale(1.02);
+}
+
+.footer-brand .brand-logo-img {
+  height: 52px;
+  max-width: 195px;
+}
+
+/* Legacy text/mark fallback if image is not used */
 .brand-logo .logo-mark {
   width: 38px;
   height: 38px;
@@ -333,6 +359,16 @@ main {
 }
 
 @media (max-width: 768px) {
+  .brand-logo-img {
+    height: 38px;
+    max-width: 145px;
+  }
+
+  .footer-brand .brand-logo-img {
+    height: 44px;
+    max-width: 160px;
+  }
+
   .main-nav {
     display: none;
     position: absolute;
